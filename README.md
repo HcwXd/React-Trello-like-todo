@@ -18,58 +18,58 @@
        `state: data`
        `props: handleAddList, handelDeleteList, handleChangeListHeader, handleAddCard, handleDeleteCard, handleToggleChecked, updateDashboard, generateID` 
 
-      - list-group
+         - list-group
 
-        - list-wrap
-          `props: data, handleAddCard, handleDeleteCard, handleChangeListHeader`, 
-          - list-content
-            `props: data, data.header, data.details, data.ids, handleAddCard, handleDeleteCard, handleToggleChecked, handleChangeListHeader `
-            `funcProps: updateListStatus `
-            - list-header
+           - list-wrap
+             `props: data, handleAddCard, handleDeleteCard, handleChangeListHeader`, 
+             - list-content
+               `props: data, data.header, data.details, data.ids, handleAddCard, handleDeleteCard, handleToggleChecked, handleChangeListHeader `
+               `funcProps: updateListStatus `
+               - list-header
 
-              - textarea
-                `props: data.header, handleChangeListHeader`
-              - list-status
-                `props: updateListStatus`
+                 - textarea
+                   `props: data.header, handleChangeListHeader`
+                 - list-status
+                   `props: updateListStatus`
 
-            - list-card
-              `props: data.details, data.ids, handleToggleChecked ,handleDeleteCard `
-              - list-member
+               - list-card
+                 `props: data.details, data.ids, handleToggleChecked ,handleDeleteCard `
+                 - list-member
 
-                - list-detail
+                   - list-detail
 
-                - list-edit
+                   - list-edit
 
-            - card-adder-wrap
-              `funcProps: showCardAddBtn`
+               - card-adder-wrap
+                 `funcProps: showCardAddBtn`
 
-            - adding-card
+               - adding-card
 
-              - item-add-input
+                 - item-add-input
 
-              - item-add-btn
-                `props: handleAddCard, data `
-                `funcProps: hideCardAddBtn`
+                 - item-add-btn
+                   `props: handleAddCard, data `
+                   `funcProps: hideCardAddBtn`
 
-              - item-cancel-btn
-                `funcProps: hideCardAddBtn`
+                 - item-cancel-btn
+                   `funcProps: hideCardAddBtn`
 
-      - list-adder-wrap
-        `props: data, handleAddList, handelDeleteList, updateDashboard`
+         - list-adder-wrap
+           `props: data, handleAddList, handelDeleteList, updateDashboard`
 
-        - add-input
+           - add-input
 
-        - add-btn
-          `funcProps: hideListAddBtn`
-          `props: handleAddList`
+           - add-btn
+             `funcProps: hideListAddBtn`
+             `props: handleAddList`
 
-        - cancel-btn
+           - cancel-btn
 
-          `funcProps: hideListAddBtn`
+             `funcProps: hideListAddBtn`
 
-        - list-adder
-          `funcProps: showListAddBtn`
+           - list-adder
+             `funcProps: showListAddBtn`
 
-        - dashboard
-          `props: data, updateDashboard`
+           - dashboard
+             `props: data, updateDashboard`
 
