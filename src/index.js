@@ -192,7 +192,7 @@ class ListWrap extends React.Component {
         return (
             <div className="list-wrap">
                 <div className="list-content">
-                    <ListHeader header={this.props.header} listId={this.props.listId} handleDeleteList={this.props.handleDeleteList} />
+                    <ListHeader cards={this.props.cards} header={this.props.header} listId={this.props.listId} handleDeleteList={this.props.handleDeleteList} />
                     <ListCard cards={this.props.cards} handleToggleChecked={this.props.handleToggleChecked} handleDeleteCard={this.props.handleDeleteCard} />
                     <a className="card-adder-wrap" onClick={this.showCardAddBtn.bind(this)} ref="cardAdder">Add a card</a>
                     <div className="adding-card" ref="addingCard">
@@ -211,10 +211,28 @@ class ListHeader extends React.Component {
         var deleteList = () => {
             this.props.handleDeleteList(this.listId);
         }
+
+        var showStatus = () => {
+            var uncheckedItems = this.props.cards.filter(cardItem => {
+                return !cardItem.checked;
+            })
+            ReactDOM.findDOMNode(this.refs.status).innerHTML = "Todo: " + uncheckedItems.length;
+            ReactDOM.findDOMNode(this.refs.status).style.display = "block";
+            ReactDOM.findDOMNode(this.refs.delete).innerHTML = "X";
+        }
+        var hideStatus = () => {
+            ReactDOM.findDOMNode(this.refs.status).style.display = "none";
+            ReactDOM.findDOMNode(this.refs.delete).innerHTML = "一";
+        }
         return (
             <div className="list-header">
+                <div className="status-shown" ref="status" ></div>
                 <textarea className="text-area">{this.props.header}</textarea>
-                <div className="list-status" onClick={deleteList}>一</div>
+                <div className="list-status"
+                    ref="delete"
+                    onClick={deleteList}
+                    onMouseOver={showStatus}
+                    onMouseOut={hideStatus}>一</div>
             </div>
         )
     }
