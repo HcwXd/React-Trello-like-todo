@@ -2,6 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
+var listIdCounter = 1003;
+var cardIdCounter = 10;
+
 class BoardContent extends React.Component {
     constructor(props) {
         super(props);
@@ -9,51 +12,133 @@ class BoardContent extends React.Component {
             data: [
                 {
                     header: "Short-term stuff",
-                    listId: "001",
+                    listId: 1001,
                     cards: [
                         {
-                            id: "0001", task: "Finish Web Hw", checked: true
+                            id: 1, task: "Finish Web Hw", checked: true
                         },
                         {
-                            id: "0002", task: "Study Newwork Administration", checked: false
+                            id: 2, task: "Study Newwork Administration", checked: false
                         },
                         {
-                            id: "0003", task: "Work out", checked: true
+                            id: 3, task: "Work out", checked: true
                         },
                         {
-                            id: "0004", task: "Have dinner with Ken", checked: false
+                            id: 4, task: "Have dinner with Ken", checked: false
                         },
                         {
-                            id: "0005", task: "Study Macro Economics", checked: false
+                            id: 5, task: "Study Macro Economics", checked: false
                         },
                     ]
                 },
                 {
                     header: "Long-term goal",
-                    listId: "002",
+                    listId: 1002,
                     cards: [
                         {
-                            id: "0006", task: "Master RoR", checked: false
+                            id: 6, task: "Master RoR", checked: false
                         },
                         {
-                            id: "0007", task: "Build the next Facebook", checked: true
+                            id: 7, task: "Build the next Facebook", checked: true
                         },
                         {
-                            id: "0008", task: "Finish side project", checked: true
+                            id: 8, task: "Finish side project", checked: true
                         },
                         {
-                            id: "0009", task: "Sleep for 24hrs", checked: false
+                            id: 9, task: "Sleep for 24hrs", checked: false
                         }
                     ]
                 }
             ]
         };
     }
+
+    handleAddList(newHeader) {
+        var newList = {
+            header: newHeader,
+            listId: listIdCounter,
+            cards: []
+        }
+        listIdCounter++;
+        var newData = this.state.data;
+        newData = newData.concat(newList);
+        this.setState({ data: newData });
+    }
+
+    handleDeleteList(targetListId) {
+        var newData = this.state.data;
+        var targetListIndex = newData.findIndex(list => {
+            return list.listId === targetListId;
+        })
+
+        newData.splice(targetListIndex, 1);
+        this.setState({ data: newData });
+    }
+
+    handleAddCard(newTask, targetListId) {
+        var newCard = {
+            id: cardIdCounter,
+            task: newTask,
+            checked: false
+        }
+        cardIdCounter++;
+        var newData = this.state.data;
+        var targetListIndex = newData.findIndex(list => {
+            return list.listId === targetListId;
+        })
+
+        newData[targetListIndex].cards.push(newCard);
+        this.setState({ data: newData });
+    }
+
+    handleDeleteCard(targetCardId) {
+        var newData = this.state.data;
+
+        newData.forEach(listItem => {
+            var targetCardIndex = listItem.cards.findIndex(cardItem => {
+                return targetCardId === cardItem.id;
+            })
+
+            if (targetCardIndex >= 0) {
+                listItem.cards.splice(targetCardIndex, 1)
+            }
+
+        });
+
+        this.setState({ data: newData });
+    }
+
+
+
+    handleToggleChecked(targetCardId) {
+        var newData = this.state.data;
+
+        newData.forEach(listItem => {
+            var targetCardIndex = listItem.cards.findIndex(cardItem => {
+                return targetCardId === cardItem.id;
+            })
+
+            if (targetCardIndex >= 0) {
+                listItem.cards[targetCardIndex].checked = !listItem.cards[targetCardIndex].checked;
+            }
+
+        });
+
+        this.setState({ data: newData });
+
+    }
+
     render() {
         return (
             <div className="board-content" >
-                <ListGroup data={this.state.data} />
-                <ListAdderWrap data={this.state.data} />
+                <ListGroup
+                    data={this.state.data}
+                    handleAddCard={this.handleAddCard.bind(this)}
+                    handleToggleChecked={this.handleToggleChecked.bind(this)}
+                    handleDeleteCard={this.handleDeleteCard.bind(this)}
+                    handleDeleteList={this.handleDeleteList.bind(this)}
+                />
+                <ListAdderWrap data={this.state.data} handleAddList={this.handleAddList.bind(this)} />
             </div>
         );
     }
@@ -68,6 +153,10 @@ class ListGroup extends React.Component {
                     cards={listItem.cards}
                     listId={listItem.listId}
                     key={listItem.listId}
+                    handleAddCard={this.props.handleAddCard}
+                    handleToggleChecked={this.props.handleToggleChecked}
+                    handleDeleteCard={this.props.handleDeleteCard}
+                    handleDeleteList={this.props.handleDeleteList}
                 />
             )
         }, this);
@@ -91,15 +180,24 @@ class ListWrap extends React.Component {
     }
 
     render() {
+        var addCard = () => {
+            if (ReactDOM.findDOMNode(this.refs.cardInput).value) {
+                var newTask = ReactDOM.findDOMNode(this.refs.cardInput).value;
+                this.props.handleAddCard(newTask, this.props.listId);
+                this.hideCardAddBtn();
+                ReactDOM.findDOMNode(this.refs.cardInput).value = "";
+            }
+        }
+
         return (
             <div className="list-wrap">
                 <div className="list-content">
-                    <ListHeader header={this.props.header} />
-                    <ListCard cards={this.props.cards} />
+                    <ListHeader header={this.props.header} listId={this.props.listId} handleDeleteList={this.props.handleDeleteList} />
+                    <ListCard cards={this.props.cards} handleToggleChecked={this.props.handleToggleChecked} handleDeleteCard={this.props.handleDeleteCard} />
                     <a className="card-adder-wrap" onClick={this.showCardAddBtn.bind(this)} ref="cardAdder">Add a card</a>
                     <div className="adding-card" ref="addingCard">
-                        <input type="text" className="item-add-input" placeholder="Add a card..." />
-                        <span className="item-add-btn">Add</span>
+                        <input type="text" className="item-add-input" placeholder="Add a card..." ref="cardInput" />
+                        <span className="item-add-btn" onClick={addCard}>Add</span>
                         <span className="item-cancel-btn" onClick={this.hideCardAddBtn.bind(this)} >X</span>
                     </div>
                 </div>
@@ -110,10 +208,13 @@ class ListWrap extends React.Component {
 
 class ListHeader extends React.Component {
     render() {
+        var deleteList = () => {
+            this.props.handleDeleteList(this.listId);
+        }
         return (
             <div className="list-header">
                 <textarea className="text-area">{this.props.header}</textarea>
-                <div className="list-status">一</div>
+                <div className="list-status" onClick={deleteList}>一</div>
             </div>
         )
     }
@@ -129,6 +230,8 @@ class ListCard extends React.Component {
                     checked={cardsItem.checked}
                     taskId={cardsItem.id}
                     key={cardsItem.id}
+                    handleToggleChecked={this.props.handleToggleChecked}
+                    handleDeleteCard={this.props.handleDeleteCard}
                 />
             )
         }, this);
@@ -142,22 +245,25 @@ class ListCard extends React.Component {
 
 class ListMember extends React.Component {
     render() {
+        var toggleChecked = () => {
+            this.props.handleToggleChecked(this.props.id);
+        }
+        var deleteCard = () => {
+            this.props.handleDeleteCard(this.props.id);
+        }
         return (
-            <div className="list-member">
+
+            <div className="list-member" onClick={toggleChecked}>
                 <div className={this.props.checked ? "list-detail checked" : "list-detail"}>
                     {this.props.task}
                 </div>
-                <div className="list-edit">X</div>
+                <div className="list-edit" onClick={deleteCard}>X</div>
             </div>
         );
     }
 }
 
-
-
-
 class ListAdderWrap extends React.Component {
-
     showListAddBtn() {
         // const listAdder = document.querySelector('.list-adder');
         // listAdder.style.display = "none";
@@ -190,11 +296,22 @@ class ListAdderWrap extends React.Component {
             })
             checkedTodo += checkedCard.length;
         });
+
+        var addList = () => {
+            if (ReactDOM.findDOMNode(this.refs.listInput).value) {
+                var newHeader = ReactDOM.findDOMNode(this.refs.listInput).value;
+                this.props.handleAddList(newHeader);
+                this.hideListAddBtn();
+                console.log("go")
+                ReactDOM.findDOMNode(this.refs.listInput).value = "";
+            }
+        }
+
         return (
             <div className="list-adder-wrap" ref="listAdderWrap">
                 <div className="adding-list" ref="addingList">
-                    <input type="text" className="add-input" placeholder="Add a list..." />
-                    <span className="add-btn">Save</span>
+                    <input type="text" className="add-input" placeholder="Add a list..." ref="listInput" />
+                    <span className="add-btn" onClick={addList}>Save</span>
                     <span className="cancel-btn" onClick={this.hideListAddBtn.bind(this)}>X</span>
                 </div>
                 <a className="list-adder" onClick={this.showListAddBtn.bind(this)} ref="listAdder">Add a list</a>
