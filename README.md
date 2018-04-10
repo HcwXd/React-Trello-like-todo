@@ -4,7 +4,7 @@ A trello-like todo this built with React. You can see plain JavaScript version [
 
 ## Screenshot
 
-![img](./Demo Screenshot)
+![img](./Demo Screenshot.png)
 
 ## Structure
 
