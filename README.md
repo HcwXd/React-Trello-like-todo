@@ -4,7 +4,7 @@ A trello-like todo this built with React. You can see plain JavaScript version [
 
 ## Screenshot
 
-![img](./Demo Screenshot.png)
+![img](https://github.com/HcwXd/React-Trello-like-todo/blob/master/Demo%20Screenshot.png?raw=true)
 
 ## Structure
 
