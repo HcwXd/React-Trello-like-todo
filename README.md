@@ -1,6 +1,10 @@
 # React-Trello-like-todo
 
+A trello-like todo this built with React. You can see plain JavaScript version [here](https://github.com/HcwXd/Trello-like-Todo-list)
 
+## Screenshot
+
+![img](./Demo Screenshot)
 
 ## Structure
 
